@@ -1,9 +1,9 @@
-# 🏥 Google Maps Scraper & Sentiment Dashboard (RS Bekasi 2025)
+# 🏥 Google Maps Scraper & Sentiment Dashboard
 
 Proyek ini adalah alat otomatisasi untuk mengambil ulasan dari Google Maps menggunakan Selenium dan memvisualisasikannya ke dalam dashboard analisis sentimen menggunakan Streamlit dan Plotly.
 
 ## 🌟 Fitur Utama
-* **Scraper Semi-Manual**: Mengambil ulasan secara real-time dari Google Maps dengan kontrol via web UI.
+* **Scraper Semi-Manual**: Mengekstraksi ulasan terbaru dari Google Maps menggunakan bot semi-otomatis dengan kontrol navigasi via Web UI.
 * **Analisis Sentimen & Fokus Area**: Mengkategorikan ulasan berdasarkan NPS (Promotor/Pasif/Detraktor) dan fokus area keluhan (Pelayanan, Fasilitas, Harga, dll).
 * **Dashboard Interaktif**: Visualisasi KPI dan grafik perbandingan kompetitor menggunakan Plotly.
 * **Komparasi Head-to-Head**: Membandingkan persentase keluhan antar rumah sakit.
@@ -16,8 +16,8 @@ Sebelum menjalankan, pastikan Anda telah menginstal:
 ## 🛠️ Instalasi
 1. Clone repository ini:
    ```bash
-   git clone https://github.com/Louispandamesiregar/maps_scraper.git
-   cd maps_scraper
+   git clone https://github.com/Louispandamesiregar/Proyek_KKP.git
+   cd Proyek_KKP
    ```
 
 2. Instal pustaka yang diperlukan:

@@ -103,31 +103,43 @@ if menu == "Dashboard Visualisasi":
         </style>
     """, unsafe_allow_html=True)
 
-    file_path = 'Data_Komparasi_RS_Bekasi_2025.xlsx'
+    file_path = 'Data_Komparasi_RS_Bekasi.xlsx'
 
     if not os.path.exists(file_path):
         st.warning("⚠️ Data belum tersedia. Silakan jalankan scraper terlebih dahulu di menu 'Control Panel Scraper'.")
     else:
         df = pd.read_excel(file_path)
 
-        # --- Data Khusus Primaya Hospital Bekasi Barat ---
-        df_primaya = df[df['Rumah Sakit'] == 'Primaya Hospital Bekasi Barat']
+        # --- Pilihan Rumah Sakit ---
+        daftar_rs = df['Rumah Sakit'].unique().tolist()
+        rs_pilihan = st.selectbox("🏗️ Pilih Rumah Sakit untuk Dianalisis:", daftar_rs, index=0)
 
-        total_ulasan = len(df_primaya)
-        promotor = len(df_primaya[df_primaya['Klasifikasi NPS'] == 'Promotor (Kekuatan)'])
-        pasif = len(df_primaya[df_primaya['Klasifikasi NPS'] == 'Pasif (Netral)'])
-        detraktor = len(df_primaya[df_primaya['Klasifikasi NPS'] == 'Detraktor (Titik Lemah)'])
+        # --- Data Khusus Rumah Sakit Pilihan ---
+        df_pilihan = df[df['Rumah Sakit'] == rs_pilihan]
+
+        total_ulasan = len(df_pilihan)
+        promotor = len(df_pilihan[df_pilihan['Klasifikasi NPS'] == 'Promotor (Kekuatan)'])
+        pasif = len(df_pilihan[df_pilihan['Klasifikasi NPS'] == 'Pasif (Netral)'])
+        detraktor = len(df_pilihan[df_pilihan['Klasifikasi NPS'] == 'Detraktor (Titik Lemah)'])
+
+        # Hitung NPS Score
+        nps_score = 0
+        if total_ulasan > 0:
+            nps_score = round(((promotor / total_ulasan) - (detraktor / total_ulasan)) * 100)
 
         # --- Kartu Metrik KPI ---
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4, col5 = st.columns(5)
         with col1:
             st.markdown(f'<div class="metric-card"><div class="metric-title">Total Ulasan</div><div class="metric-value">{total_ulasan}</div></div>', unsafe_allow_html=True)
         with col2:
-            st.markdown(f'<div class="metric-card"><div class="metric-title">Promotor (Kekuatan)</div><div class="metric-value val-green">{promotor}</div></div>', unsafe_allow_html=True)
+            nps_color = "#2ecc71" if nps_score > 0 else "#e74c3c" if nps_score < 0 else "#f1c40f"
+            st.markdown(f'<div class="metric-card"><div class="metric-title">Skor NPS</div><div class="metric-value" style="color: {nps_color};">{nps_score}</div></div>', unsafe_allow_html=True)
         with col3:
-            st.markdown(f'<div class="metric-card"><div class="metric-title">Pasif (Netral)</div><div class="metric-value val-yellow">{pasif}</div></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="metric-card"><div class="metric-title">Promotor</div><div class="metric-value val-green">{promotor}</div></div>', unsafe_allow_html=True)
         with col4:
-            st.markdown(f'<div class="metric-card"><div class="metric-title">Detraktor (Lemah)</div><div class="metric-value val-red">{detraktor}</div></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="metric-card"><div class="metric-title">Pasif</div><div class="metric-value val-yellow">{pasif}</div></div>', unsafe_allow_html=True)
+        with col5:
+            st.markdown(f'<div class="metric-card"><div class="metric-title">Detraktor</div><div class="metric-value val-red">{detraktor}</div></div>', unsafe_allow_html=True)
 
         st.write("")
         st.markdown("---")
@@ -138,7 +150,7 @@ if menu == "Dashboard Visualisasi":
 
         with c_chart1:
             st.subheader("Distribusi Area Titik Lemah (Detraktor)")
-            df_lemah = df_primaya[df_primaya['Klasifikasi NPS'] == 'Detraktor (Titik Lemah)']
+            df_lemah = df_pilihan[df_pilihan['Klasifikasi NPS'] == 'Detraktor (Titik Lemah)']
             if not df_lemah.empty:
                 pie_fig = px.pie(
                     df_lemah, names='Fokus Area', hole=0.45,
@@ -157,7 +169,7 @@ if menu == "Dashboard Visualisasi":
 
         with c_chart2:
             st.subheader("Tingkat Kepuasan Berdasarkan Tipe Pasien")
-            pivot_pasien = pd.crosstab(df_primaya['Tipe Pasien'], df_primaya['Klasifikasi NPS'])
+            pivot_pasien = pd.crosstab(df_pilihan['Tipe Pasien'], df_pilihan['Klasifikasi NPS'])
             for kolom in ['Promotor (Kekuatan)', 'Pasif (Netral)', 'Detraktor (Titik Lemah)']:
                 if kolom not in pivot_pasien.columns:
                     pivot_pasien[kolom] = 0
@@ -306,7 +318,7 @@ if menu == "Dashboard Visualisasi":
         if pilihan_tabel == "Detail Keluhan (Titik Lemah)":
             render_tabel_ulasan(df_lemah[['Periode', 'Nama Akun', 'Tipe Pasien', 'Fokus Area', 'Ulasan']])
         else:
-            df_kuat = df_primaya[df_primaya['Klasifikasi NPS'] == 'Promotor (Kekuatan)']
+            df_kuat = df_pilihan[df_pilihan['Klasifikasi NPS'] == 'Promotor (Kekuatan)']
             render_tabel_ulasan(df_kuat[['Periode', 'Nama Akun', 'Tipe Pasien', 'Fokus Area', 'Ulasan']])
 
 

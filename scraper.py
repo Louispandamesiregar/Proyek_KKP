@@ -217,7 +217,7 @@ def full_batch_scraper(status_callback=print, wait_callback=None):
                         let nama = item.querySelector('.d4r55') ? item.querySelector('.d4r55').innerText : '';
                         let rating = item.querySelector('.kvMYJc') ? item.querySelector('.kvMYJc').getAttribute('aria-label') : '';
                         let tanggal = item.querySelector('.rsqaWe') ? item.querySelector('.rsqaWe').innerText : '';
-                        let teks = item.querySelector('.wiI7pd') ? item.querySelector('.wiI7pd').innerText : '';
+                        let teks = item.querySelector('.MyEned .wiI7pd') ? item.querySelector('.MyEned .wiI7pd').innerText : '';
 
                         if(teks.trim() !== '') {
                             hasil.push({
@@ -259,7 +259,7 @@ def full_batch_scraper(status_callback=print, wait_callback=None):
 
             df_sampled = pd.concat(hasil_sampling).reset_index(drop=True)
 
-            file_name = 'Data_Komparasi_RS_Bekasi_2025.xlsx'
+            file_name = 'Data_Komparasi_RS_Bekasi.xlsx'
             df_sampled.to_excel(file_name, index=False)
             status_callback(f"🔥 BERHASIL! Total {len(df_sampled)} ulasan disimpan ke '{file_name}'.")
 
