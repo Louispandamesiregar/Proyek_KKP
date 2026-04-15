@@ -7,6 +7,7 @@ import time
 import pandas as pd
 import re
 import urllib.parse
+import random
 
 # ======================================================================
 # DAFTAR RUMAH SAKIT YANG AKAN DI-SCRAPE
@@ -79,7 +80,7 @@ def fungsi_scroll_otomatis(driver, status_callback):
         except Exception:
             pass
 
-        time.sleep(0.8)
+        time.sleep(random.uniform(0.7, 1.2))
 
 
 # ======================================================================
@@ -204,7 +205,7 @@ def full_batch_scraper(status_callback=print, wait_callback=None):
             # Klik tombol 'Selengkapnya' agar teks ulasan terbuka penuh
             try:
                 driver.execute_script("document.querySelectorAll('button.w8nwRe').forEach(b => b.click());")
-                time.sleep(1.5)
+                time.sleep(random.uniform(1.2, 2.0))
             except Exception:
                 pass
 
