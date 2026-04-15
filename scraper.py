@@ -181,7 +181,7 @@ def full_batch_scraper(status_callback=print, wait_callback=None):
             status_callback(f"==================================================")
 
             status_callback("🧭 Membuka Google Maps dan mencari rumah sakit...")
-            url_pencarian = f"https://www.google.com/maps/search/{urllib.parse.quote(nama_rs + ' Bekasi')}"
+            url_pencarian = f"https://www.google.com/maps?q={urllib.parse.quote(nama_rs + ' Bekasi')}"
             driver.get(url_pencarian)
             time.sleep(5)
 
