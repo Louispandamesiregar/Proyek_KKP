@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime
 import time
@@ -184,7 +186,15 @@ def full_batch_scraper(status_callback=print, wait_callback=None):
             status_callback("🧭 Membuka Google Maps dan mencari rumah sakit...")
             url_pencarian = f"https://www.google.com/maps?q={urllib.parse.quote(nama_rs + ' Bekasi')}"
             driver.get(url_pencarian)
-            time.sleep(5)
+
+            # Menunggu elemen utama Google Maps muncul (maks 15 detik)
+            try:
+                WebDriverWait(driver, 15).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, 'div[role="main"]'))
+                )
+                status_callback("✅ Halaman Google Maps berhasil dimuat.")
+            except Exception:
+                status_callback("⚠️ Halaman lambat dimuat, melanjutkan proses...")
 
             # --- Mode Semi-Manual ---
             status_callback("💬 Mode Semi-Manual Diaktifkan.")
