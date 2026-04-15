@@ -16,8 +16,8 @@ Sebelum menjalankan, pastikan Anda telah menginstal:
 ## 🛠️ Instalasi
 1. Clone repository ini:
    ```bash
-   git clone https://github.com/Louispandamesiregar/Proyek_KKP.git
-   cd Proyek_KKP
+   git clone https://github.com/Louispandamesiregar/maps_scraper.git
+   cd maps_scraper
    ```
 
 2. Instal pustaka yang diperlukan:
