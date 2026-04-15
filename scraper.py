@@ -45,11 +45,13 @@ def fungsi_scroll_otomatis(driver, status_callback):
                         parent = parent.parentElement;
                     }
                 }
-                return reviews.length;
+                // Hitung hanya ulasan yang memiliki teks (bukan rating saja)
+                let ulasan_berteks = document.querySelectorAll('.MyEned .wiI7pd');
+                return ulasan_berteks.length;
             """)
 
             if jumlah_sekarang >= 1000:
-                status_callback(f"🎯 Target 1000 ulasan tercapai ({jumlah_sekarang} termuat). Berhenti menggulir.")
+                status_callback(f"🎯 Target 1000 ulasan berteks tercapai ({jumlah_sekarang} termuat). Berhenti menggulir.")
                 break
 
             if jumlah_sekarang == jumlah_sebelumnya:
@@ -77,7 +79,7 @@ def fungsi_scroll_otomatis(driver, status_callback):
 
             jumlah_sebelumnya = jumlah_sekarang
             if jumlah_sekarang % 50 == 0 or stuck_counter > 0:
-                status_callback(f"⚡ Bot menggulir... ({jumlah_sekarang} data termuat)")
+                status_callback(f"⚡ Bot menggulir... ({jumlah_sekarang} ulasan berteks termuat)")
 
         except Exception:
             pass
@@ -247,7 +249,7 @@ def full_batch_scraper(status_callback=print, wait_callback=None):
                 baris['Rumah Sakit'] = nama_rs
                 semua_hasil_scraping.append(baris)
 
-            status_callback(f"✅ Selesai mengekstrak {nama_rs}.")
+            status_callback(f"✅ Selesai mengekstrak {nama_rs}: {len(data_mentah)} ulasan berteks ditemukan.")
 
         # --- Pengolahan Data Akhir ---
         status_callback("\nProses pengolahan data akhir dimulai...")
@@ -261,6 +263,10 @@ def full_batch_scraper(status_callback=print, wait_callback=None):
             df_final = df[['Rumah Sakit', 'Nama Akun', 'Periode', 'Rating Lengkap',
                            'Tipe Pasien', 'Fokus Area', 'Klasifikasi NPS', 'Ulasan']]
 
+            # Hapus duplikat berdasarkan kombinasi Nama Akun dan Ulasan
+            df_final = df_final.drop_duplicates(subset=['Rumah Sakit', 'Nama Akun', 'Ulasan'])
+            status_callback(f"🧹 Data duplikat dihapus. Total unik: {len(df_final)} ulasan.")
+
             # Batasi maksimal 1000 ulasan per rumah sakit
             hasil_sampling = []
             for rs_nama in df_final['Rumah Sakit'].unique():
@@ -273,6 +279,11 @@ def full_batch_scraper(status_callback=print, wait_callback=None):
             file_name = 'Data_Komparasi_RS_Bekasi.xlsx'
             df_sampled.to_excel(file_name, index=False)
             status_callback(f"🔥 BERHASIL! Total {len(df_sampled)} ulasan disimpan ke '{file_name}'.")
+
+            # Laporan ringkasan per rumah sakit
+            for rs_nama in df_sampled['Rumah Sakit'].unique():
+                jumlah = len(df_sampled[df_sampled['Rumah Sakit'] == rs_nama])
+                status_callback(f"   📊 {rs_nama}: {jumlah} ulasan")
 
     finally:
         driver.quit()
